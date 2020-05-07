@@ -1,5 +1,6 @@
-import time
+# @ts-ignore
 from selenium import webdriver
+import time
 
 
 # navigate to Yahoo Finance using Selenium ChromeDriver to get top five gainers
@@ -18,9 +19,6 @@ def get_stocks():
     time.sleep(2)
     changes.click()
     time.sleep(2)
-
-    # print(str(driver.find_element_by_xpath(
-    #   '//*[@id="scr-res-table"]/div[1]/table/tbody/tr[1]/td[1]/a')))
 
     # get tickers for top five stocks
     stocks = []

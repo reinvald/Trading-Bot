@@ -1,5 +1,6 @@
 import datetime
 from webscraper import WebScraper
+from tradeengine import TradeEngine
 
 # main script
 if __name__ == "__main__":
@@ -12,6 +13,5 @@ if __name__ == "__main__":
     ws = WebScraper()
     record["stocks"] = ws.stocks
 
-    # 2.) split current balance between five stocks
-
-    # 3.) enter main loop, reassessing portfolio/reinvesting
+    # 2.) enter main loop, reassessing portfolio/reinvesting
+    te = TradeEngine()

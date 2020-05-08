@@ -14,4 +14,4 @@ if __name__ == "__main__":
     record["stocks"] = ws.stocks
 
     # 2.) enter main loop, reassessing portfolio/reinvesting
-    te = TradeEngine()
+    te = TradeEngine(ws.stocks)

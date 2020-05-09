@@ -62,12 +62,16 @@ class TradeEngine:
                 data, meta_data = ts.get_intraday(
                     symbol=s, interval='1min', outputsize='full')
 
+                # if bullish candle forms, cop
+
+                # if we own and price starts to go down, sell
+
                 print('*' * 60)
                 pprint(data.head(2))
 
             time.sleep(60)
 
-        # sell any remaining stocks
+        # sell any remaining stocks, empty portfolio
 
         end_funds = float(
             robin_stocks.profiles.load_account_profile()['buying_power'])

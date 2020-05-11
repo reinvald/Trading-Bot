@@ -67,6 +67,7 @@ class TradeEngine:
                 # if we own and price starts to go down, sell
 
                 print('*' * 60)
+                pprint(data)
                 pprint(data.head(2))
 
             time.sleep(60)

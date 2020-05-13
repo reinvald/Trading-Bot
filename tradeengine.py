@@ -19,6 +19,10 @@ class TradeEngine:
         # keys: stocks, values: buying power allocated to stock
         self.funds = {}
         self.start_funds = self.split_funds()
+        # boolean dictionary: holds number of shares, None otherwise
+        self.bought = {}
+        for s in stocks:
+            self.bought[s] = None
         self.trade()
         self.logout()
 
@@ -62,20 +66,41 @@ class TradeEngine:
                 data, meta_data = ts.get_intraday(
                     symbol=s, interval='1min', outputsize='full')
 
-                # if bullish candle forms, cop
+                print('*' * 60)
+                pprint(data.head(2))
+
+                curr_price = data['4. close'][0]
+                prev_price = data['4. close'][1]
+                open_price = data['1. open'][0]
+
+                # TODO: replace with Robinhood API calls
+                # if bullish candle forms, purchase
+                if self.bought[s] == None and curr_price > open_price:
+                    self.buy(s, curr_price)
 
                 # if we own and price starts to go down, sell
-
-                print('*' * 60)
-                pprint(data)
-                pprint(data.head(2))
+                elif self.bought[s] != None and curr_price < prev_price:
+                    self.sell(s, curr_price)
 
             time.sleep(60)
 
-        # sell any remaining stocks, empty portfolio
+        # sell any remaining shares, empty portfolio
+        for s in self.stocks:
+            data, meta_data = ts.get_intraday(
+                symbol=s, interval='1min', outputsize='full')
+
+            curr_price = data['4. close'][0]
+
+            # if we own and price starts to go down, sell
+            if self.bought[s] != None:
+                self.sell(s, curr_price)
 
         end_funds = float(
             robin_stocks.profiles.load_account_profile()['buying_power'])
+
+        end_funds = 0
+        for s in self.stocks:
+            end_funds += self.funds[s]
 
         # print out stats for day's trading
         print('*' * 20)
@@ -86,6 +111,18 @@ class TradeEngine:
         print('profit/loss: ' +
               str(((end_funds - self.start_funds) / self.start_funds) * 100) + '%')
         print('*' * 20)
+
+    # buys as many shares of s as possible
+    def buy(self, s, curr_price):
+        print('buying ' + s + '...')
+        self.bought[s] = self.funds[s] / curr_price
+        self.funds[s] = 0
+
+    # sells all shares of s
+    def sell(self, s, curr_price):
+        print('selling ' + s + '...')
+        self.funds[s] = self.bought[s] * curr_price
+        self.bought[s] = None
 
     # returns true if it is currently during trading hours
     def in_trading_hours(self):

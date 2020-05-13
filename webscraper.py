@@ -37,7 +37,7 @@ class WebScraper:
         stocks.append(driver.find_element_by_xpath(
             '//*[@id="scr-res-table"]/div[1]/table/tbody/tr[5]/td[1]/a').text)
 
-        print('today\'s top five gainers: ' + stocks[1] + ', ' + stocks[1] +
+        print('today\'s top five gainers: ' + stocks[0] + ', ' + stocks[1] +
               ', ' + stocks[2] + ', ' + stocks[3] + ', ' + stocks[4])
         driver.quit()
 

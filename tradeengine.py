@@ -58,6 +58,12 @@ class TradeEngine:
         # setup Alpha Vantage API for getting stock prices
         ts = TimeSeries(key=ALPHA_VANTAGE_API_KEY, output_format='pandas')
 
+        if !self.in_trading_hours():
+            print('waiting for market to open...'):
+
+        while !self.in_trading_hours():
+            time.sleep(60)
+
         # main loop, runs every minute reevaluates portfolio/current holdings, appropriately triggering buys/sells
         while self.in_trading_hours():
 

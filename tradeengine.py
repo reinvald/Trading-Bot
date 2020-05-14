@@ -8,7 +8,7 @@ from alpha_vantage.timeseries import TimeSeries
 from secrets import ALPHA_VANTAGE_API_KEY, ROBINHOOD_USERNAME, ROBINHOOD_PASSWORD
 
 market_open = datetime.time(9, 30)
-market_close = datetime.time(16, 00)
+market_close = datetime.time(15, 45)
 
 
 # module buying/selling shares, using Robinhood API
@@ -131,10 +131,9 @@ class TradeEngine:
 
         # write record to file
         with open(self.record["date"] + '.txt', 'w') as outfile:
-            json.dump(self.record, outfile)
+            json.dump(self.record, outfile, indent=4)
 
     # buys as many shares of s as possible
-
     def buy(self, s, curr_price):
         print('buying ' + s + '...')
         self.bought[s] = self.funds[s] / curr_price
@@ -146,6 +145,7 @@ class TradeEngine:
         self.funds[s] = self.bought[s] * curr_price
         self.bought[s] = None
 
+    # busy waits until the market opens at 9:30am ET
     def wait_for_market_open(self):
         if not self.in_trading_hours():
             print('market closed! waiting for market to open...')

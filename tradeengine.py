@@ -1,13 +1,14 @@
-import datetime
 import time
+import json
+import datetime
 import robin_stocks
-from webscraper import WebScraper
 from pprint import pprint
+from webscraper import WebScraper
 from alpha_vantage.timeseries import TimeSeries
 from secrets import ALPHA_VANTAGE_API_KEY, ROBINHOOD_USERNAME, ROBINHOOD_PASSWORD
 
 market_open = datetime.time(9, 30)
-market_close = datetime.time(15, 30)
+market_close = datetime.time(16, 00)
 
 
 # module buying/selling shares, using Robinhood API
@@ -16,9 +17,16 @@ class TradeEngine:
     # init takes in today's top five stocks
     def __init__(self):
         self.wait_for_market_open()
+        # dictionary containing all of the day's information, stored at end of day
+        self.record = {"date": str(datetime.date.today()),
+                       "starting": None,
+                       "ending": None,
+                       "profit": None,
+                       "stocks": []}
         # initiatilize WebScraper to get top five gainers of the day
         ws = WebScraper()
         self.stocks = ws.stocks
+        self.record["stocks"] = ws.stocks
         self.login()
         # keys: stocks, values: buying power allocated to stock
         self.funds = {}
@@ -106,17 +114,27 @@ class TradeEngine:
         for s in self.stocks:
             end_funds += self.funds[s]
 
+        # store stats in record JSON
+        self.record["starting"] = str(self.start_funds)
+        self.record["ending"] = str(end_funds)
+        self.record["profit"] = str(
+            ((end_funds - self.start_funds) / self.start_funds) * 100) + '%'
+
         # print out stats for day's trading
-        print('*' * 20)
+        print('*' * 68)
         print('trading for the day complete...')
         print('today\'s stocks: ' + str(self.stocks))
-        print('starting buying power: ' + str(self.start_funds))
-        print('end buying power: ' + str(end_funds))
-        print('profit/loss: ' +
-              str(((end_funds - self.start_funds) / self.start_funds) * 100) + '%')
-        print('*' * 20)
+        print('starting buying power: ' + self.record["starting"])
+        print('end buying power: ' + self.record["ending"])
+        print('profit/loss: ' + self.record["profit"])
+        print('*' * 68)
+
+        # write record to file
+        with open(self.record["date"] + '.txt', 'w') as outfile:
+            json.dump(self.record, outfile)
 
     # buys as many shares of s as possible
+
     def buy(self, s, curr_price):
         print('buying ' + s + '...')
         self.bought[s] = self.funds[s] / curr_price

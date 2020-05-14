@@ -1,5 +1,4 @@
 import datetime
-from webscraper import WebScraper
 from tradeengine import TradeEngine
 
 # main script
@@ -9,9 +8,6 @@ if __name__ == "__main__":
     record = {"datetime": str((datetime.datetime.now())),
               "stocks": []}
 
-    # 1.) scrape Yahoo Finance for tickers of today's top gainers
-    ws = WebScraper()
-    record["stocks"] = ws.stocks
-
-    # 2.) enter main loop, reassessing portfolio/reinvesting
-    te = TradeEngine(ws.stocks)
+    # start trade engine
+    te = TradeEngine()
+    record["stocks"] = te.stocks

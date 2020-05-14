@@ -1,6 +1,7 @@
 import datetime
 import time
 import robin_stocks
+from webscraper import WebScraper
 from pprint import pprint
 from alpha_vantage.timeseries import TimeSeries
 from secrets import ALPHA_VANTAGE_API_KEY, ROBINHOOD_USERNAME, ROBINHOOD_PASSWORD
@@ -13,15 +14,18 @@ market_close = datetime.time(15, 30)
 class TradeEngine:
 
     # init takes in today's top five stocks
-    def __init__(self, stocks):
+    def __init__(self):
+        self.wait_for_market_open()
+        # initiatilize WebScraper to get top five gainers of the day
+        ws = WebScraper()
+        self.stocks = ws.stocks
         self.login()
-        self.stocks = stocks
         # keys: stocks, values: buying power allocated to stock
         self.funds = {}
         self.start_funds = self.split_funds()
         # boolean dictionary: holds number of shares, None otherwise
         self.bought = {}
-        for s in stocks:
+        for s in self.stocks:
             self.bought[s] = None
         self.trade()
         self.logout()
@@ -58,12 +62,6 @@ class TradeEngine:
         # setup Alpha Vantage API for getting stock prices
         ts = TimeSeries(key=ALPHA_VANTAGE_API_KEY, output_format='pandas')
 
-        if !self.in_trading_hours():
-            print('waiting for market to open...'):
-
-        while !self.in_trading_hours():
-            time.sleep(60)
-
         # main loop, runs every minute reevaluates portfolio/current holdings, appropriately triggering buys/sells
         while self.in_trading_hours():
 
@@ -72,7 +70,7 @@ class TradeEngine:
                 data, meta_data = ts.get_intraday(
                     symbol=s, interval='1min', outputsize='full')
 
-                print('*' * 60)
+                print('*' * 68)
                 pprint(data.head(2))
 
                 curr_price = data['4. close'][0]
@@ -81,7 +79,7 @@ class TradeEngine:
 
                 # TODO: replace with Robinhood API calls
                 # if bullish candle forms, purchase
-                if self.bought[s] == None and curr_price > open_price:
+                if self.bought[s] == None and curr_price > open_price and curr_price > prev_price:
                     self.buy(s, curr_price)
 
                 # if we own and price starts to go down, sell
@@ -129,6 +127,15 @@ class TradeEngine:
         print('selling ' + s + '...')
         self.funds[s] = self.bought[s] * curr_price
         self.bought[s] = None
+
+    def wait_for_market_open(self):
+        if not self.in_trading_hours():
+            print('market closed! waiting for market to open...')
+
+        while not self.in_trading_hours():
+            time.sleep(60)
+
+        print('market is now open!')
 
     # returns true if it is currently during trading hours
     def in_trading_hours(self):

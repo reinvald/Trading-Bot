@@ -76,10 +76,11 @@ class TradeEngine:
             # fetch current price of each of our stocks
             for s in self.stocks:
                 data, meta_data = ts.get_intraday(
-                    symbol=s, interval='1min', outputsize='full')
+                    symbol=s, interval='1min', outputsize='compact')
 
                 print('*' * 68)
                 pprint(data.head(2))
+                print(str(data['4. close']))
 
                 curr_price = data['4. close'][0]
                 prev_price = data['4. close'][1]

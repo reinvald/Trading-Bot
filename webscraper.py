@@ -1,4 +1,5 @@
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 
 
@@ -11,7 +12,7 @@ class WebScraper:
     # method for fetching stocks
     def get_stocks(self):
         print('fetching top five stocks for today...')
-        driver = webdriver.Chrome()
+        driver = webdriver.Chrome(ChromeDriverManager().install())
         driver.get("https://finance.yahoo.com/gainers")
 
         # XPath for "Change" filter

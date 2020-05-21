@@ -80,7 +80,6 @@ class TradeEngine:
 
                 print('*' * 68)
                 pprint(data.head(2))
-                print(str(data['4. close']))
 
                 curr_price = data['4. close'][0]
                 prev_price = data['4. close'][1]

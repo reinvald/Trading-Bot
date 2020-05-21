@@ -25,6 +25,7 @@ class WebScraper:
         changes.click()
         time.sleep(2)
 
+        # TODO: only fetch top 5 NYSE gainers
         # get tickers for top five stocks
         stocks = []
         stocks.append(driver.find_element_by_xpath(

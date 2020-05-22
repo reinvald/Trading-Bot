@@ -1,6 +1,6 @@
 # Trading Bot
 
-Very simple Python trading bot that uses a handful of APIs (and a surface level understanding of the stock market) to trade during open market times.
+Very simple Python trading bot that uses a handful of APIs (and a surface level understanding of the stock market) to trade during open market times. NOTE: this bot currently only simulates trading.
 
 ## Installation
 

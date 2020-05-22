@@ -1,0 +1,6 @@
+caffeine
+robin_stocks
+alpha_vantage
+pandas
+selenium
+webdriver-manager
